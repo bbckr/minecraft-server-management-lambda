@@ -17,7 +17,9 @@ jobs:
             pip install -r requirements-dev.txt
       - run:
           name: Lint Code
-          command: make lint
+          command: |
+            . venv/bin/activate
+            make lint
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
           paths:
