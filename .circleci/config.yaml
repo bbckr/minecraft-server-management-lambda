@@ -1,0 +1,34 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/app
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            mkdir -p ./venv
+            virtualenv ./venv
+            . venv/bin/activate
+            pip install -r requirements-dev.txt
+      - run:
+          name: Lint Code
+          command: make lint
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+          paths:
+            - "venv"
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/
