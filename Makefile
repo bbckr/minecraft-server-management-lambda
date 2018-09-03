@@ -1,5 +1,6 @@
 MODULES=src/backup-service
 VENV_NAME=venv
+VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 PYTHON=$(VENV_NAME)/bin/python2.7
 
 pre:
@@ -14,6 +15,6 @@ $(VENV_NAME)/bin/activate: requirements-dev.txt
 	touch $(VENV_NAME)/bin/activate
 
 lint:
-	$(VENV_NAME)
+	$(VENV_ACTIVATE)
 	$(PYTHON) -m flake8 $(MODULES)
 	
