@@ -36,7 +36,7 @@ jobs:
   #           - /usr/local/lib/node_modules/
   #     - run:
   #         name: Deploy AWS Lambda
-  #         command: sls deploy --stage pre
+  #         command: severless deploy 
 workflows:
   version: 2
   build:

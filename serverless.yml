@@ -1,0 +1,24 @@
+service: minecraft-service
+provider:
+  name: aws
+  runtime: python2.7
+  region: us-east-1
+  stage: prod
+  environment:
+    SERVICE_NAME: ${self:service}
+package:
+  individually: true
+functions:
+  hello:
+    handler: src/hello/handler.hello
+    package:
+      exclude:
+        - ./**
+      include: 
+        - src/hello/handler.py
+    events:
+      - http:
+          path: hello
+          method: get
+          cors: true
+          
