@@ -39,7 +39,7 @@ jobs:
           command: serverless package
       - run:
           name: Deploy
-          command: severless deploy -p ./.serverless
+          command: serverless deploy -p ./.serverless
 workflows:
   version: 2
   build:
