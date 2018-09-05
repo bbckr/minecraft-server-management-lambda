@@ -18,25 +18,28 @@ jobs:
       - run:
           name: Lint Code
           command: make lint
-  # deploy:
-  #   docker:
-  #     - image: circleci/node:8.10
-  #   working_directory: ~/repo
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys:
-  #         - v1-node-
-  #     - run:
-  #         name: Install Serverless CLI
-  #         command: sudo npm i -g serverless
-  #     - save_cache:
-  #         key: v1-node-
-  #         paths:
-  #           - /usr/local/lib/node_modules/
-  #     - run:
-  #         name: Deploy AWS Lambda
-  #         command: severless deploy 
+  deploy:
+    docker:
+      - image: circleci/node:8.10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-node-
+      - run:
+          name: Install Serverless
+          command: sudo npm i -g serverless
+      - save_cache:
+          key: v1-node-
+          paths:
+            - /usr/local/lib/node_modules/
+      - run:
+          name: Package
+          command: serverless package
+      - run:
+          name: Deploy
+          command: severless deploy -p ./.serverless
 workflows:
   version: 2
   build:
@@ -45,9 +48,9 @@ workflows:
           filters:
             branches:
               only: /.*/
-      # - deploy:
-      #     requires:
-      #       - build
-      #     filters:
-      #       branches:
-      #         only: master
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
