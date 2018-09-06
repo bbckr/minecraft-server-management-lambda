@@ -19,3 +19,7 @@ var/
 
 # Serverless directories
 .serverless
+
+# Terraform
+.terraform/
+*.tfstate*
