@@ -1,7 +1,7 @@
 import json
 
 
-def handler(event, context):
+def backup(event, context):
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
         "input": event
