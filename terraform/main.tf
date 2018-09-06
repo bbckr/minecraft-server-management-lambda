@@ -37,8 +37,8 @@ EOF
 resource "aws_s3_bucket_object" "lambda_function_zip_backup" {
   bucket = "${aws_s3_bucket.lambda_bucket.id}"
   key    = "1.0.0/backup.zip"
-  source = "../.serverless/backup.zip"
-  etag   = "${md5(file("../.serverless/backup.zip"))}"
+  source = ".serverless/backup.zip"
+  etag   = "${md5(file(".serverless/backup.zip"))}"
 }
 
 resource "aws_lambda_function" "lambda_function_backup" {
@@ -47,5 +47,5 @@ resource "aws_lambda_function" "lambda_function_backup" {
   s3_key        = "1.0.0/backup.zip"
   handler       = "src/backup/handler.backup"
   runtime       = "python2.7"
-  role          = "${aws_iam_role.lambda_role.arn}"
+  role          = "${aws_iam_role.lambda_function_role_backup.arn}"
 }
