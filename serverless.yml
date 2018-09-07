@@ -1,6 +1,8 @@
 service: minecraft-service
 provider:
   name: aws
+  runtime: python2.7
+  region: us-east-1
 package:
   individually: true
 functions:

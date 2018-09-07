@@ -1,0 +1,19 @@
+{%- macro function(name, params, runtime) -%}
+resource "aws_lambda_function" "lambda_function_{{ name }}" {
+  function_name = "{{ name }}"
+  s3_bucket     = "${aws_s3_bucket.lambda_bucket.id}"
+  s3_key        = "{{ params.package.tags.version }}/{{ name }}.zip"
+  handler       = "{{ params.handler }}"
+  runtime       = "{{ runtime }}"
+  role          = "${aws_iam_role.lambda_function_role.arn}"
+}
+{%- endmacro -%}
+
+{%- macro s3_object(name, params) -%}
+resource "aws_s3_bucket_object" "lambda_function_zip_{{ name }}" {
+  bucket = "${aws_s3_bucket.lambda_bucket.id}"
+  key    = "{{ params.package.tags.version }}/{{ name }}.zip"
+  source = ".serverless/{{ name }}.zip"
+  etag   = "${md5(file(".serverless/{{ name }}.zip"))}"
+}
+{%- endmacro -%}

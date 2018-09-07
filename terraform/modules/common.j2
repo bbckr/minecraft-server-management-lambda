@@ -1,0 +1,35 @@
+{%- macro aws(provider) -%}
+provider "aws" {
+  version = "~> 1.29.0"
+  region  = "{{ provider.region }}"
+}
+{%- endmacro -%}
+
+{%- macro bucket(service) -%}
+resource "aws_s3_bucket" "lambda_bucket" {
+  bucket = "lambda-bucket-{{ service }}"
+  acl    = "private"
+}
+{%- endmacro -%}
+
+{%- macro iam_role(service) -%}
+resource "aws_iam_role" "lambda_function_role" {
+  name = "lambda-function-role-{{ service }}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+{%- endmacro -%}
