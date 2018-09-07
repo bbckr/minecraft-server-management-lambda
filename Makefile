@@ -1,4 +1,4 @@
-MODULES=src/backup-service
+MODULES=src/backup
 VENV_NAME=venv
 VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 PYTHON=$(VENV_NAME)/bin/python2.7
