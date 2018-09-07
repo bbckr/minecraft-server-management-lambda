@@ -20,26 +20,25 @@ jobs:
           command: make lint
   deploy:
     docker:
-      - image: circleci/node:8.10
-    working_directory: ~/repo
+      - image: bckr/lambda-deploy-tools:latest
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
-      # - restore_cache:
-      #     keys:
-      #     - v1-node-
-      - run:
-          name: Install Serverless
-          command: sudo npm i -g serverless
-      # - save_cache:
-      #     key: v1-node-
-      #     paths:
-      #       - /usr/local/lib/node_modules/
+      - run: 
+          name: Build
+          command: |
+            mkdir terraform/output
+            jinja2 terraform/main.j2 serverless.yml > terraform/output/main.tf
       - run:
           name: Package
           command: serverless package
       - run:
           name: Deploy
-          command: serverless deploy -p ./.serverless
+          command: |
+            terraform init terraform/output/
+            terraform plan terraform/output/ # TODO: switch to apply --auto-approve
 workflows:
   version: 2
   build:
@@ -49,6 +48,7 @@ workflows:
             branches:
               only: /.*/
       - deploy:
+          context: dockerhub
           requires:
             - build
           filters:

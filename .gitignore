@@ -23,3 +23,5 @@ var/
 # Terraform
 .terraform/
 *.tfstate*
+
+output

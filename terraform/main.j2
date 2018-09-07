@@ -1,0 +1,13 @@
+{% from 'modules/common.j2' import aws, bucket, iam_role %}
+{{- aws(provider) }}
+
+{{ bucket(service) }}
+
+# TODO: One role per function
+{{ iam_role(service) -}}
+
+{% from 'modules/lambda.j2' import function, s3_object %}
+{%- for name, params in functions.iteritems() -%}
+{{ function(name, params, provider.runtime) }}
+{{ s3_object(name, params) }}
+{%- endfor %}
