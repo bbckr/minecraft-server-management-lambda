@@ -26,7 +26,8 @@ jobs:
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
-      - run: Build
+      - run: 
+          name: Build
           command: |
             mkdir terraform/output
             jinja2 terraform/main.j2 serverless.yml > terraform/output/main.tf
