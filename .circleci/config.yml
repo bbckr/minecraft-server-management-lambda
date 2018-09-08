@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/repo
     docker:
-      - image: circleci/python:2.7
+      - image: bckr/lambda-tools:latest
     steps:
       - checkout
       - restore_cache:
@@ -28,9 +28,15 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+      - restore_cache:
+          key: v1-pip-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
       - run:
           name: Install Dependencies
           command: make venv
+      - save_cache:
+          key: v1-pip-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+          paths:
+            - "venv"
       - run: 
           name: Build
           command: make build

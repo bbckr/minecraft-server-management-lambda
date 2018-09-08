@@ -4,16 +4,6 @@ VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 PYTHON=$(VENV_NAME)/bin/python2.7
 TERRAFORM_VERSION=0.11.8
 
-pre:
-	sudo apt-get -y install python3.5 python3-pip nodejs npm unzip
-	wget https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_linux_amd64.zip
-	sudo mv terraform /usr/local/bin/
-	terraform init terraform/output/
-	sudo npm install -g serverless
-	serverless plugin install -n serverless-python-requirements
-	python3 -m pip install virtualenv
-	make venv
-
 venv: $(VENV_NAME)/bin/activate
 $(VENV_NAME)/bin/activate: requirements-dev.txt
 	test -d $(VENV_NAME) || virtualenv --no-wheel $(VENV_NAME)
@@ -31,6 +21,7 @@ build:
 
 package:
 	$(VENV_ACTIVATE)
+	npm list | grep serverless-python-requirements || sls plugin install -n serverless-python-requirements
 	serverless package
 
 plan:

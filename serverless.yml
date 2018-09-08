@@ -21,8 +21,6 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: false
-    usePipenv: true
     slim: true
     slimPatterns:
       - "*.egg-info*"
-    zip: true

@@ -16,6 +16,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+venv/
 
 # Serverless directories
 .serverless
@@ -26,5 +27,7 @@ var/
 
 # npm
 node_modules
+package.json
+package-lock.json
 
 output
