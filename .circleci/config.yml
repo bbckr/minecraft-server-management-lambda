@@ -7,12 +7,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v1-pip-{{ checksum "requirements-dev.txt" }}
+          key: v2-pip-{{ checksum "requirements-dev.txt" }}
       - run:
           name: Install Dependencies
           command: make venv
       - save_cache:
-          key: v1-pip-{{ checksum "requirements-dev.txt" }}
+          key: v2-pip-{{ checksum "requirements-dev.txt" }}
           paths:
             - "/root/project/venv"
       - run:
