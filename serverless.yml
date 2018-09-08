@@ -20,4 +20,9 @@ plugins:
   - serverless-python-requirements
 custom:
   pythonRequirements:
-    dockerizePip: true
+    dockerizePip: false
+    usePipenv: true
+    slim: true
+    slimPatterns:
+      - "*.egg-info*"
+    zip: true

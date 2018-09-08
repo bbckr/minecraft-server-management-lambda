@@ -28,16 +28,15 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+      - run:
+          name: Install Dependencies
+          command: make venv
       - run: 
           name: Build
-          command: |
-            mkdir terraform/output
-            jinja2 terraform/main.j2 serverless.yml > terraform/output/main.tf
+          command: make build
       - run:
           name: Package
-          command: |
-            serverless plugin install -n serverless-python-requirements
-            serverless package
+          command: make package
       - run:
           name: Deploy
           command: |
@@ -57,4 +56,5 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              # only: master # Swap back after
+              only: /.*/
