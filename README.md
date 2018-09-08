@@ -1,5 +1,10 @@
 # Minecraft Server Management through Lambda Functions
 
+## Developing locally
+``` bash
+docker-compose run --rm dev
+```
+
 ## Deploying the Infrastructure
 The exported environment variables below will be configured to the terraform AWS provider when you apply. There is no need to specify it in the provider.
 

@@ -1,26 +1,25 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/repo
     docker:
-      - image: circleci/python:2.7
+      - image: bckr/lambda-tools:latest
     steps:
       - checkout
       - restore_cache:
-          key: v1-pip-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+          key: v1-pip-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements.txt" }}
       - run:
           name: Install Dependencies
           command: make venv
       - save_cache:
-          key: v1-pip-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+          key: v1-pip-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements.txt" }}
           paths:
-            - "venv"
+            - "/root/project/venv"
       - run:
           name: Lint Code
           command: make lint
   deploy:
     docker:
-      - image: bckr/lambda-deploy-tools:latest
+      - image: bckr/lambda-tools:latest
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
@@ -28,21 +27,17 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+      - restore_cache:
+          key: v1-pip-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements.txt" }}
       - run: 
           name: Build
-          command: |
-            mkdir terraform/output
-            jinja2 terraform/main.j2 serverless.yml > terraform/output/main.tf
+          command: make build
       - run:
           name: Package
-          command: |
-            serverless plugin install -n serverless-python-requirements
-            serverless package
+          command: make package
       - run:
           name: Deploy
-          command: |
-            terraform init terraform/output/
-            terraform plan terraform/output/ # TODO: switch to apply --auto-approve
+          command: make plan # TODO: switch to deploy
 workflows:
   version: 2
   build:

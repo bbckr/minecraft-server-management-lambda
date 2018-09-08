@@ -1,2 +1,3 @@
 flake8
+jinja2-cli[yaml]
 -r requirements.txt
