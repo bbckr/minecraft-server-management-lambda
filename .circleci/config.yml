@@ -6,12 +6,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: v3-pip-{{ checksum "requirements-dev.txt" }}
+          key: v1-pip-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements.txt" }}
       - run:
           name: Install Dependencies
           command: make venv
       - save_cache:
-          key: v3-pip-{{ checksum "requirements-dev.txt" }}
+          key: v1-pip-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements.txt" }}
           paths:
             - "/root/project/venv"
       - run:
@@ -28,7 +28,7 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - restore_cache:
-          key: v3-pip-{{ checksum "requirements-dev.txt" }}
+          key: v1-pip-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements.txt" }}
       - run: 
           name: Build
           command: make build
@@ -52,4 +52,4 @@ workflows:
             - build
           filters:
             branches:
-              only: /.*/
+              only: master
