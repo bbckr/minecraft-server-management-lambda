@@ -20,7 +20,7 @@ jobs:
           command: make lint
   deploy:
     docker:
-      - image: bckr/lambda-deploy-tools:latest
+      - image: bckr/lambda-tools:latest
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
