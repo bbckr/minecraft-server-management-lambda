@@ -24,4 +24,7 @@ var/
 .terraform/
 *.tfstate*
 
+# npm
+node_modules
+
 output
