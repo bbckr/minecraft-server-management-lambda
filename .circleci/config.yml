@@ -33,7 +33,9 @@ jobs:
             jinja2 terraform/main.j2 serverless.yml > terraform/output/main.tf
       - run:
           name: Package
-          command: serverless package
+          command: |
+            serverless plugin install -n serverless-python-requirements
+            serverless package
       - run:
           name: Deploy
           command: |
