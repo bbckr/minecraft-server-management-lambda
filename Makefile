@@ -25,7 +25,9 @@ package:
 	serverless package
 
 plan:
-	terraform plan terraform/output/
+	terraform init terraform/output
+	terraform plan terraform/output
 
 deploy:
-	terraform apply --auto-approve terraform/output/
+	terraform init terraform/output
+	terraform apply --auto-approve terraform/output

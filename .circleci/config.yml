@@ -45,9 +45,7 @@ jobs:
           command: make package
       - run:
           name: Deploy
-          command: |
-            terraform init terraform/output/
-            terraform plan terraform/output/ # TODO: switch to apply --auto-approve
+          command: make plan # TODO: switch to deploy
 workflows:
   version: 2
   build:
@@ -62,5 +60,4 @@ workflows:
             - build
           filters:
             branches:
-              # only: master # Swap back after
-              only: /.*/
+              only: master

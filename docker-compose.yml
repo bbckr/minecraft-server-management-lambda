@@ -3,4 +3,4 @@ services:
   dev:
     image: bckr/lambda-tools:latest
     volumes:
-     - .:/deploy
+     - .:/project
