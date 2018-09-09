@@ -22,6 +22,7 @@ build:
 package:
 	$(VENV_ACTIVATE)
 	npm list | grep serverless-python-requirements || sls plugin install -n serverless-python-requirements
+	npm list | grep serverless-iam-roles-per-function || sls plugin install -n serverless-iam-roles-per-function
 	serverless package
 
 plan:
@@ -31,3 +32,11 @@ plan:
 deploy:
 	terraform init terraform/output
 	terraform apply --auto-approve terraform/output
+
+destroy:
+	terraform destroy --auto-approve terraform/output
+
+all:
+	make build
+	make package
+	make deploy
