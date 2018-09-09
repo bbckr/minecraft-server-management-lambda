@@ -1,13 +1,21 @@
-{% from 'modules/common.j2' import aws, bucket, iam_role %}
+{# All variables are injected from the serverless.yml in the project root #}
+{%- from 'modules/common.j2' import aws, bucket, ssm_parameter %}
+{%- from 'modules/lambda.j2' import lambda_function, s3_object %}
+{%- from 'modules/iam.j2' import iam_role_policy, iam_role %}
 {{- aws(provider) }}
 
-{{ bucket(service) }}
+{{ bucket(service, provider.region) }}
 
-# TODO: One role per function
-{{ iam_role(service) -}}
+{%- for lambdaFunctionName, lambdaParams in functions.iteritems() %}
 
-{% from 'modules/lambda.j2' import function, s3_object %}
-{%- for name, params in functions.iteritems() -%}
-{{ function(name, params, provider.runtime) }}
-{{ s3_object(name, params) }}
+{{ lambda_function(lambdaFunctionName, lambdaParams, provider.runtime) }}
+
+{{ s3_object(lambdaFunctionName, lambdaParams) }}
+
+{{ iam_role(lambdaFunctionName) }}
+
+{{ iam_role_policy(lambdaFunctionName, lambdaParams.iamRoleStatements) }}
+
 {%- endfor %}
+
+{{ ssm_parameter("PRIVATE_KEY") }}

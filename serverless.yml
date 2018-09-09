@@ -15,9 +15,15 @@ functions:
         - src/backup/handler.py
       tags:
         version: 1.0.0
-# TODO: Either package together or only install minimal reqs in individual packages
+    iamRoleStatements:
+      - Effect: "Allow"        
+        Action:
+          - ssm:GetParameter
+        Resource: 
+          - "arn:aws:ssm:*:*:parameter/PRIVATE_KEY"
 plugins:
   - serverless-python-requirements
+  - serverless-iam-roles-per-function
 custom:
   pythonRequirements:
     dockerizePip: false

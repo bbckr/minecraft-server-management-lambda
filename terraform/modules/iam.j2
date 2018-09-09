@@ -1,0 +1,53 @@
+{# Attaches many iam role statements to a single policy #}
+{# Policies are not necessary for a lambda function that doesn't use other aws resources #}
+{%- macro iam_role_policy(lambdaFunctionName, iamRoleStatements) -%}
+resource "aws_iam_role_policy" "lambda_function_role_policy_{{ lambdaFunctionName }}" {
+  name = "lambda-function-role-policy-{{ lambdaFunctionName }}"
+  role = "${aws_iam_role.lambda_function_role_{{ lambdaFunctionName }}.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {%- for statement in iamRoleStatements %}
+    {
+      "Effect": "{{ statement.Effect }}",
+      "Action": [
+        {%- for action in statement.Action %}
+        "{{ action }}"{{ "," if not loop.last }}
+        {%- endfor %}
+      ],
+      "Resource": [
+        {%- for resource in statement.Resource %}
+        "{{ resource }}"{{ "," if not loop.last }}
+        {%- endfor %}
+      ]
+    }{{ "," if not loop.last }}
+    {%- endfor %}
+  ]
+}
+EOF
+}
+{%- endmacro -%}
+
+{# One role per lambda function, and a role can have many policies #}
+{%- macro iam_role(lambdaFunctionName) -%}
+resource "aws_iam_role" "lambda_function_role_{{ lambdaFunctionName }}" {
+  name = "lambda-function-role-{{ lambdaFunctionName }}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      }
+    }
+  ]
+}
+EOF
+}
+{%- endmacro -%}
