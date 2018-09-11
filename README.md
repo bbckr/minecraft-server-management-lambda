@@ -1,6 +1,6 @@
-# Minecraft Server Management through Lambda Functions
+# minecraft-server-management-lambda
 This project is an example of:
-1. Developing in a docker container
+1. Developing applications in a docker container
 2. Repeatably deploying lambda infrastructure using terraform, jinja, and serverless
 3. Interacting with SSM parameters using Lambda for secrets
 4. Applying least priviledge IAM policies per lambda function
@@ -55,27 +55,27 @@ make deploy
 ``` js
 {
   /* required parameters */
-  ip: 'x', // minecraft server url
-  source: ['/x/x.txt', '/x/x_dir/'], // absolute path of files and folders to backup
-  dest: '/x/dir/', // absolute path to store the zip on the host server
+  "host": "x", // minecraft server url
+  "source": ["/x/x.txt", "/x/x_dir/"], // absolute path of files and folders to backup
+  "dest": "/x/dir/", // absolute path to store the zip on the host server
 
   /* optional parameters */
-  port: 22,// (default: 22) ssh port to use when connecting
-  user: 'x', // (default: root) ssh user to use when connecting
-  upload_to_s3: false, // (default: false) uploads to the bucket under /backups
-  is_container: false, // (default: false) specify if you are backing up files from a docker container running on the server
-  container_name: 'x', // required if parameter is_container is set to `true`
+  "port": 22,// (default: 22) ssh port to use when connecting
+  "user": "x", // (default: root) ssh user to use when connecting
+  "upload_to_s3": false, // (default: false) uploads to the bucket under /backups
+  "is_container": false, // (default: false) specify if you are backing up files from a docker container running on the server
+  "container_name": "x" // required if parameter is_container is set to `true`
 }
 ```
 
 Example request if you deployed the minecraft server from the `minecraft-server-docker` repository [here](https://github.com/bbckr/minecraft-server-docker):
 ``` js
 {
-  ip: 'minecraft.towerofswole.com',
-  source: ['/server/tos_world/', 'whitelist.txt'],
-  dest: '/tmp',
-  upload_to_s3: true,
-  is_container: true,
-  container_name: 'minecraft'
+  "host": "minecraft.towerofswole.com",
+  "source": ["/server/tos_world/", "/server/whitelist.txt"],
+  "dest": "/tmp",
+  "upload_to_s3": true,
+  "is_container": true,
+  "container_name": "minecraft"
 }
 ```
