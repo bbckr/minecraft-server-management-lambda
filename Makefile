@@ -5,7 +5,7 @@ PYTHON=$(VENV_NAME)/bin/python3.6
 TERRAFORM_VERSION=0.11.8
 
 venv: $(VENV_NAME)/bin/activate
-$(VENV_NAME)/bin/activate: requirements-dev.txt
+$(VENV_NAME)/bin/activate: requirements-dev.txt requirements.txt
 	test -d $(VENV_NAME) || virtualenv -p python3 --no-wheel $(VENV_NAME)
 	$(PYTHON) -m pip install -r requirements-dev.txt
 	touch $(VENV_NAME)/bin/activate
