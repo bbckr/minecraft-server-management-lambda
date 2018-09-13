@@ -1,18 +1,19 @@
 service: minecraft-service
 provider:
   name: aws
-  runtime: python2.7
+  runtime: python3.6
   region: us-east-1
 package:
   individually: true
 functions:
   backup:
-    handler: src/backup/handler.backup
+    handler: src/backup/backup.handler
     package:
       exclude:
         - ./**
       include: 
-        - src/backup/handler.py
+        - src/backup/backup.py
+        - src/backup/request.schema
       tags:
         version: 1.0.0
     iamRoleStatements:

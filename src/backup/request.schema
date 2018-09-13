@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BackupServerRequest",
+  "type": "object",
+  "properties": {
+    "host": {
+      "type": "string",
+      "format": "hostname"
+    },
+    "source": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "dest": {
+      "type": "string"
+    },
+    "upload_to_s3": {
+      "type": "boolean"
+    },
+    "container": {
+      "type": "string"
+    }
+  },
+  "required": ["host", "source", "dest"]
+}
