@@ -13,6 +13,7 @@ functions:
         - ./**
       include: 
         - src/backup/backup.py
+        - src/backup/request.schema
       tags:
         version: 1.0.0
     iamRoleStatements:
@@ -26,7 +27,7 @@ plugins:
   - serverless-iam-roles-per-function
 custom:
   pythonRequirements:
-    dockerizePip: true
+    dockerizePip: false
     slim: true
     slimPatterns:
       - "*.egg-info*"
