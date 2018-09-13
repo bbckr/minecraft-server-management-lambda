@@ -62,9 +62,8 @@ make deploy
   /* optional parameters */
   "port": 22,// (default: 22) ssh port to use when connecting
   "user": "x", // (default: root) ssh user to use when connecting
-  "upload_to_s3": false, // (default: false) uploads to the bucket under /backups
-  "is_container": false, // (default: false) specify if you are backing up files from a docker container running on the server
-  "container_name": "x" // required if parameter is_container is set to `true`
+  "upload": false, // (default: false) uploads to the bucket under /backups
+  "container": "x" // specify the container name if you are backing up files from a docker container running on the server
 }
 ```
 
@@ -74,8 +73,7 @@ Example request if you deployed the minecraft server from the `minecraft-server-
   "host": "minecraft.towerofswole.com",
   "source": ["/server/tos_world/", "/server/whitelist.txt"],
   "dest": "/tmp",
-  "upload_to_s3": true,
-  "is_container": true,
-  "container_name": "minecraft"
+  "upload": true,
+  "container": "minecraft"
 }
 ```

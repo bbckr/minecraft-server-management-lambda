@@ -7,12 +7,12 @@ package:
   individually: true
 functions:
   backup:
-    handler: src/backup/handler.backup
+    handler: src/backup/backup.handler
     package:
       exclude:
         - ./**
       include: 
-        - src/backup/handler.py
+        - src/backup/backup.py
       tags:
         version: 1.0.0
     iamRoleStatements:
@@ -26,7 +26,7 @@ plugins:
   - serverless-iam-roles-per-function
 custom:
   pythonRequirements:
-    dockerizePip: false
+    dockerizePip: true
     slim: true
     slimPatterns:
       - "*.egg-info*"
