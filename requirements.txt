@@ -1,3 +1,4 @@
 paramiko
 boto3
 jsonschema
+pyyaml
