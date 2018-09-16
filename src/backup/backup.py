@@ -16,7 +16,9 @@ def setup_logging(default_path='src/shared/logging.yaml', default_level=logging.
             raise
 
 
-def validate_request(payload, default_schema='src/backup/request.schema', default_format_checker=jsonschema.FormatChecker()):
+def validate_request(
+                    payload, default_schema='src/backup/request.schema',
+                    default_format_checker=jsonschema.FormatChecker()):
     with open(default_schema, 'r') as f:
         try:
             schema_data = f.read()
@@ -27,13 +29,22 @@ def validate_request(payload, default_schema='src/backup/request.schema', defaul
             raise
 
 
+def return_response(statusCode, body):
+    response = {
+        'statusCode': statusCode,
+        'body': body
+    }
+
+    return response
+
+
 def handler(event, context):
     try:
         setup_logging()
         validate_request(event)
     except jsonschema.exceptions.ValidationError as e:
-        return { 'statusCode': 400, 'body': e.message }
+        return return_response(400, e.message)
     except Exception as e:
-        return { 'statusCode': 500, 'body': 'Internal error' }
+        return return_response(500, 'Internal Error')
 
-    return { 'statusCode': 200, 'body': 'Successfully backed up %s' % event['host'] }
+    return return_response(200, 'Successfully backed up %s' % event['host'])
