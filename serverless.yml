@@ -14,6 +14,7 @@ functions:
       include: 
         - src/backup/backup.py
         - src/backup/request.schema
+        - src/shared/logging.yaml
       tags:
         version: 1.0.0
     iamRoleStatements:
