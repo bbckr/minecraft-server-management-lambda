@@ -10,19 +10,22 @@
     "source": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "minLength" : 1
       },
       "minItems": 1,
       "uniqueItems": true
     },
     "dest": {
-      "type": "string"
+      "type": "string",
+      "minLength" : 1
     },
     "upload_to_s3": {
       "type": "boolean"
     },
     "container": {
-      "type": "string"
+      "type": "string",
+      "minLength" : 1
     }
   },
   "required": ["host", "source", "dest"]
