@@ -11,13 +11,14 @@ import boto3
 import botocore
 import paramiko
 
+
 class ValidationException(Exception):
     pass
 
 
 class ClientException(Exception):
     pass
-    
+
 
 class InternalException(Exception):
     pass
