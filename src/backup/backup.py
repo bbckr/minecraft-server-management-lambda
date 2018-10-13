@@ -52,16 +52,7 @@ def validate_request(
             raise ValidationException(e.message)
 
 
-def create_backup(event, backup_file_name):
-
-    host = event.get('host')
-    port = event.get('port', 22)
-    user = event.get('user', 'root')
-
-    source = event.get('source')
-    dest = event.get('dest')
-    container = event.get('container')
-
+def establish_connection(host, port, user):
     # Retrieve and create private key
     try:
         client = boto3.client('ssm')
@@ -99,6 +90,10 @@ def create_backup(event, backup_file_name):
         logging.error(message, exc_info=True)
         raise ClientException(message)
 
+    return ssh
+
+
+def create_backup(ssh, backup_file_name, source, dest, container):
     # Backup files to destination directory
     zip_cmd = 'zip -u %s/%s -r' % (dest, backup_file_name) if not container \
         else 'docker exec -d %s zip -u /%s -r' % (container, backup_file_name)
@@ -114,7 +109,6 @@ def create_backup(event, backup_file_name):
     if container:
         ssh.exec_command('docker cp %s:/%s %s' % (container, backup_file_name, dest))
 
-    ssh.close()
     return
 
 
@@ -131,10 +125,21 @@ def handler(event, context):
     timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
     backup_file_name = 'backup_%s_%s.zip' % (timestamp, event.get('host', ''))
 
+    host = event.get('host')
+    port = event.get('port', 22)
+    user = event.get('user', 'root')
+
+    source = event.get('source')
+    dest = event.get('dest')
+    container = event.get('container')
+
     try:
         setup_logging()
         validate_request(event)
-        create_backup(event, backup_file_name)
+        
+        ssh = establish_connection(host, port, user)
+        create_backup(ssh, backup_file_name, source, dest, container)
+        ssh.close()
 
     except ValidationException as e:
         return return_response(400, str(e))
