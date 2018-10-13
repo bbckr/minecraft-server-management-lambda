@@ -52,31 +52,30 @@ def validate_request(
             raise ValidationException(e.message)
 
 
-def create_backup(event, backup_file_name):
-
-    host = event.get('host')
-    port = event.get('port', 22)
-    user = event.get('user', 'root')
-
-    # Retrieve private key
+def establish_connection(host, port, user):
+    # Retrieve and create private key
     try:
         client = boto3.client('ssm')
         ssm_parameter = client.get_parameter(Name='PRIVATE_KEY', WithDecryption=True)
         private_key_value = ssm_parameter['Parameter']['Value']
+        private_key = paramiko.RSAKey.from_private_key(StringIO(private_key_value))
     except botocore.exceptions.ClientError as e:
         client_error_code = e.response['Error']['Code']
         if client_error_code == 'ParameterNotFound':
             message = 'SSM parameter PRIVATE_KEY does not exist'
         else:
-            message = 'SSM Client error: %s' % client_error_code
+            message = 'SSM Client error %s' % client_error_code
         logging.error(message, exc_info=True)
         raise InternalException(message)
+    except paramiko.ssh_exception.SSHException:
+        message = 'Invalid private key'
+        logging.error(message, exc_info=True)
+        raise ClientException(message)
 
     # Initialize ssh connection
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
-        private_key = paramiko.RSAKey.from_private_key(StringIO(private_key_value))
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(host, port=port, username=user, pkey=private_key)
     except socket.gaierror:
         message = 'Unable to resolve host %s' % host
@@ -90,12 +89,25 @@ def create_backup(event, backup_file_name):
         message = 'Unable to authenticate with user %s' % user
         logging.error(message, exc_info=True)
         raise ClientException(message)
-    except paramiko.ssh_exception.SSHException:
-        message = 'Invalid private key'
-        logging.error(message, exc_info=True)
-        raise ClientException(message)
-    finally:
-        ssh.close()
+
+    return ssh
+
+
+def create_backup(ssh, backup_file_name, source, dest, container):
+    # Backup files to destination directory
+    zip_cmd = 'zip -u %s/%s -r' % (dest, backup_file_name) if not container \
+        else 'docker exec -d %s zip -u /%s -r' % (container, backup_file_name)
+
+    # Make destination directory if it doesnt exist
+    ssh.exec_command('mkdir -p %s' % dest)
+
+    for s in source:
+        # TODO: error handle if file not found or empty, or container does not exist
+        ssh.exec_command('%s %s' % (zip_cmd, s))
+
+    # Move to destination directory in host if container
+    if container:
+        ssh.exec_command('docker cp %s:/%s %s' % (container, backup_file_name, dest))
 
     return
 
@@ -113,10 +125,21 @@ def handler(event, context):
     timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
     backup_file_name = 'backup_%s_%s.zip' % (timestamp, event.get('host', ''))
 
+    host = event.get('host')
+    port = event.get('port', 22)
+    user = event.get('user', 'root')
+
+    source = event.get('source')
+    dest = event.get('dest')
+    container = event.get('container')
+
     try:
         setup_logging()
         validate_request(event)
-        create_backup(event, backup_file_name)
+
+        ssh = establish_connection(host, port, user)
+        create_backup(ssh, backup_file_name, source, dest, container)
+        ssh.close()
 
     except ValidationException as e:
         return return_response(400, str(e))

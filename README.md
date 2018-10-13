@@ -56,8 +56,8 @@ make deploy
 {
   /* required parameters */
   "host": "x", // minecraft server url
-  "source": ["/x/x.txt", "/x/x_dir/"], // absolute path of files and folders to backup
-  "dest": "/x/dir/", // absolute path to store the zip on the host server
+  "source": ["/x/x.txt", "/x/x_dir"], // absolute path of files and folders to backup
+  "dest": "/x/dir", // absolute path to store the zip on the host server
 
   /* optional parameters */
   "port": 22,// (default: 22) ssh port to use when connecting
@@ -71,9 +71,14 @@ Example request if you deployed the minecraft server from the `minecraft-server-
 ``` js
 {
   "host": "minecraft.towerofswole.com",
-  "source": ["/server/tos_world/", "/server/whitelist.txt"],
+  "source": ["/server/tos_world", "/server/whitelist.txt"],
   "dest": "/tmp",
   "upload": true,
   "container": "minecraft"
 }
 ```
+
+Notes:  
+* Specify directories without the trailing forward slash, e.g. `/tmp` and not `/tmp/`
+* Destination directory must not be a directory you are backing up
+* When backing up a container, the backup zip will exist in the root directory of the container, and the destination directory of the host
