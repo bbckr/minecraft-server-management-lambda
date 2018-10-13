@@ -136,7 +136,7 @@ def handler(event, context):
     try:
         setup_logging()
         validate_request(event)
-        
+
         ssh = establish_connection(host, port, user)
         create_backup(ssh, backup_file_name, source, dest, container)
         ssh.close()
