@@ -50,6 +50,7 @@ make deploy
 #### Assumptions
 1. The server host has ssh enabled
 2. The server or docker container you are backing up files on has zip installed
+3. Permissions to create directories on root if backing up a container
 
 #### Parameters
 ``` js
@@ -82,3 +83,16 @@ Notes:
 * Specify directories without the trailing forward slash, e.g. `/tmp` and not `/tmp/`
 * Destination directory must not be a directory you are backing up
 * When backing up a container, the backup zip will exist in the root directory of the container, and the destination directory of the host
+
+### Restore
+
+To be created
+
+### RCON Execution
+
+To be created
+
+## TODO
+* For `Backup` lambda, upload to bucket
+* For `Backup` lambda, include logging and error handling if container does not exist
+* For `Backup` lambda, include info logging for files attempting to be zipped that do not exist or are not found
